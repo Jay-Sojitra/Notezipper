@@ -5,7 +5,9 @@ const notes = require('./data/notes');
 const connectDB = require('./config/db');
 const userRoutes = require('./routes/userRoutes');
 const noteRoutes = require('./routes/noteRoutes');
-const { notFound, errorHandler } = require('./middleware/errorMiddleware')
+const { notFound, errorHandler } = require('./middleware/errorMiddleware');
+const path = require("path");
+
 
 env.config();
 
@@ -15,20 +17,33 @@ connectDB();
 
 app.use(express.json());
 
-app.get('/', (req, res) => {
-    res.send('welcome to my world');
-});
-
 app.use('/api/users', userRoutes);
 app.use('/api/users/login', userRoutes);
-app.use('/api/users/profile', userRoutes);  
+app.use('/api/users/profile', userRoutes);
 app.use('/api/notes', noteRoutes);
-
-
 app.get('/api/notes/:id', (req, res) => {
     const note = notes.find((n) => n._id === req.params.id)
     res.send(note);
 })
+
+// -----------------------deployment----------------------------
+
+if (process.env.NODE_ENV === 'production') {
+
+    app.use('/', express.static('../frontend/build'))
+
+    app.get('*', (req, res) => {
+
+        res.sendFile(path.resolve(__dirname, "frontend", "build", "index.html"))
+    })
+
+}
+else {
+        app.get('/', (req, res) => {
+            res.send('welcome to my world');
+        });
+    }
+// -----------------------deployment----------------------------
 
 app.use(notFound);
 app.use(errorHandler)

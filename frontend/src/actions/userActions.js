@@ -16,16 +16,16 @@ export const login = (email, password) => async (dispatch) => {
     try {
         dispatch({ type: USER_LOGIN_REQUEST });
 
-        // const config = {
-        //     headers: {
-        //         "Content-type": "application/json",
-        //     },
-        // };
-        // config
+        const config = {
+            headers: {
+                "Content-type": "application/json",
+            },
+        };
+         
 
         const { data } = await axios.post(
             "/api/users/login",
-            { email, password },
+            { email, password }, config
         );
 
         dispatch({ type: USER_LOGIN_SUCCESS, payload: data });
@@ -99,7 +99,7 @@ export const updateUser = (user) => async (dispatch, getState) => {
             }
         }
         const { data } = await axios.post(
-            "/api/users/profile",
+            "/api/users/profile", 
             user,
             config
         )

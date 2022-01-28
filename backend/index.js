@@ -28,21 +28,19 @@ app.get('/api/notes/:id', (req, res) => {
 
 // -----------------------deployment----------------------------
 
-if (process.env.NODE_ENV === 'production') {
+__dirname = path.resolve();
 
-    app.use('/', express.static('../frontend/build'))
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "/frontend/build")));
 
-    app.get('*', (req, res) => {
-
-        res.sendFile(path.resolve(__dirname, '../frontend/build/index.html'))
-    })
-
+  app.get("*", (req, res) =>
+    res.sendFile(path.resolve(__dirname, "frontend", "build", "index.html"))
+  );
+} else {
+  app.get("/", (req, res) => {
+    res.send("API is running..");
+  });
 }
-else {
-        app.get('/', (req, res) => {
-            res.send('welcome to my world');
-        });
-    }
 // -----------------------deployment----------------------------
 
 app.use(notFound);
